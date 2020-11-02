@@ -2,17 +2,13 @@
 -- Include
 --=========
 
-local lib_path = Lib.curPath()
-local lib_dep = Lib.curDepencies()
+local Class = LibManager.getDepency('LuaClass')
+---@type Wc3Utils
+local Utils = LibManager.getDepency('Wc3Utils')
+local isTypeErr = Utils.isTypeErr or error('')
 
-local Class = lib_dep.Class or error('')
----@type UtilsLib
-local UtilsLib = lib_dep.Utils or error('')
-local isTypeErr = UtilsLib.isTypeErr or error('')
-local Log = UtilsLib.Log or error('')
-
----@type BinaryDataClass
-local BinaryData = require(lib_path..'Data') or error('')
+---@type BinaryObjectClass
+local BinObject = require('Object') or error('')
 
 --=======
 -- Class
@@ -48,9 +44,9 @@ end
 -- Public
 --========
 
----@param data BinaryData
+---@param data BinaryObject
 function public:add(data)
-    isTypeErr(data, BinaryData, 'data')
+    isTypeErr(data, BinObject, 'data')
     table.insert(private.data[self].data, data)
 end
 

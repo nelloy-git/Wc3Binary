@@ -1,30 +1,30 @@
----@class BinaryLib
-local BinaryLibAPI = {}
-Lib.start('BinaryLib', {
-    Asset = Lib.load(LibList.AssetLib) or error(''),
-    Class = Lib.load(LibList.ClassLib) or error(''),
-    Types = Lib.load(LibList.TypesLib) or error(''),
-    Utils = Lib.load(LibList.UtilsLib) or error(''),
-})
-local path = Lib.curPath()
+LibManager.startLib('Wc3Binary')
+
+--===========
+-- Depencies
+--===========
+
+LibManager.addDepency('LuaClass', 'https://github.com/nelloy-git/LuaClass.git')
+LibManager.addDepency('Wc3Utils', 'https://github.com/nelloy-git/Wc3Utils.git')
 
 --=====
 -- API
 --=====
 
----@type BinaryUtils
-local Utils = require(path..'Utils') or error('')
+---@class Wc3Binary
+local Wc3Binary = {}
 
 ---@type BinaryAbilityClass
-BinaryLibAPI.Ability = require(path..'Ability') or error('')
-BinaryLibAPI.getAbilityId = Utils.nextAbilityId or error('')
-BinaryLibAPI.getOrderId = Utils.nextOrderId or error('')
-
+Wc3Binary.Ability = require('Ability') or error('')
 ---@type BinaryUnitClass
-BinaryLibAPI.Unit = require(path..'Unit') or error('')
-BinaryLibAPI.getUnitId = Utils.nextUnitId or error('')
-BinaryLibAPI.getHeroId = Utils.nextHeroId or error('')
+Wc3Binary.Unit = require('Unit') or error('')
+---@type BinaryUtils
+local Utils = require('Utils') or error('')
+Wc3Binary.getAbilityId = Utils.nextAbilityId or error('')
+Wc3Binary.getOrderId = Utils.nextOrderId or error('')
+Wc3Binary.getUnitId = Utils.nextUnitId or error('')
+Wc3Binary.getHeroId = Utils.nextHeroId or error('')
 
-Lib.finish()
+LibManager.endLib()
 
-return BinaryLibAPI
+return Wc3Binary

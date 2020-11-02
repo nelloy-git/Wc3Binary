@@ -2,29 +2,26 @@
 -- Include
 --=========
 
-local lib_path = Lib.curPath()
-local lib_dep = Lib.curDepencies()
-
-local Class = lib_dep.Class or error('')
----@type UtilsLib
-local UtilsLib = lib_dep.Utils or error('')
-local isTypeErr = UtilsLib.isTypeErr or error('')
-local Log = UtilsLib.Log or error('')
+local Class = LibManager.getDepency('LuaClass')
+---@type Wc3Utils
+local Utils = LibManager.getDepency('Wc3Utils')
+local isTypeErr = Utils.isTypeErr or error('')
+local Log = Utils.Log or error('')
 
 ---@type BinaryUtils
-local BinaryUtils = require(lib_path..'Utils') or error('')
+local BinUtils = require('Utils') or error('')
 
 --=======
 -- Class
 --=======
 
-local BinaryData = Class.new('BinaryData')
----@class BinaryData
-local public = BinaryData.public
----@class BinaryDataClass
-local static = BinaryData.static
----@type BinaryDataClass
-local override = BinaryData.override
+local BinaryObject = Class.new('BinaryObject')
+---@class BinaryObject
+local public = BinaryObject.public
+---@class BinaryObjectClass
+local static = BinaryObject.static
+---@type BinaryObjectClass
+local override = BinaryObject.override
 local private = {}
 
 --========
@@ -34,15 +31,15 @@ local private = {}
 ---@param id number
 ---@param base_id number
 ---@param name string | nil
----@param child BinaryData | nil
----@return BinaryData
+---@param child BinaryObject | nil
+---@return BinaryObject
 function override.new(id, base_id, name, child)
     isTypeErr(id, 'number', 'id')
     isTypeErr(base_id, 'number', 'base_id')
     if name then isTypeErr(name, 'string', 'name') end
-    if child then isTypeErr(child, BinaryData, 'child') end
+    if child then isTypeErr(child, BinaryObject, 'child') end
 
-    local instance = child or Class.allocate(BinaryData)
+    local instance = child or Class.allocate(BinaryObject)
     private.newData(instance, id, base_id, name)
 
     return instance
@@ -104,9 +101,9 @@ function public:serialize()
     end
 
     -- Adds header
-    bytes = BinaryUtils.id2byte(priv.base_id)..     -- Base (parent's) id
-            BinaryUtils.id2byte(priv.id)..          -- New id
-            BinaryUtils.int2byte(changes_count)..    -- Changes count
+    bytes = BinUtils.id2byte(priv.base_id)..     -- Base (parent's) id
+            BinUtils.id2byte(priv.id)..          -- New id
+            BinUtils.int2byte(changes_count)..    -- Changes count
             bytes
 
     return bytes
@@ -119,7 +116,7 @@ end
 private.data = setmetatable({}, {__mode = 'k'})
 private.field_serial_end = '\0\0\0\0'
 
----@param self BinaryData
+---@param self BinaryObject
 ---@param id number | string
 ---@param base_id number | string
 ---@param name string
@@ -142,19 +139,19 @@ private.real_types = {
 }
 
 private.type_to_bytes = {
-    bool = BinaryUtils.int2byte(0),
-    int = BinaryUtils.int2byte(0),
-    real = BinaryUtils.int2byte(1),
-    unreal = BinaryUtils.int2byte(2),
-    string = BinaryUtils.int2byte(3),
+    bool = BinUtils.int2byte(0),
+    int = BinUtils.int2byte(0),
+    real = BinUtils.int2byte(1),
+    unreal = BinUtils.int2byte(2),
+    string = BinUtils.int2byte(3),
 }
 
 private.value_to_bytes = {
-    bool = BinaryUtils.int2byte,
-    int = BinaryUtils.int2byte,
-    real = BinaryUtils.float2byte,
-    unreal = BinaryUtils.float2byte,
-    string = BinaryUtils.str2byte,
+    bool = BinUtils.int2byte,
+    int = BinUtils.int2byte,
+    real = BinUtils.float2byte,
+    unreal = BinUtils.float2byte,
+    string = BinUtils.str2byte,
 }
 
-return BinaryData.static
+return BinaryObject.static

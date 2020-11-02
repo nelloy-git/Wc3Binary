@@ -2,38 +2,33 @@
 -- Include
 --=========
 
-local lib_path = Lib.curPath()
-local lib_dep = Lib.curDepencies()
+local Class = LibManager.getDepency('LuaClass')
+---@type Wc3Utils
+local Utils = LibManager.getDepency('Wc3Utils')
+local isTypeErr = Utils.isTypeErr or error('')
+local Log = Utils.Log or error('')
+local SmartLoader = Utils.SmartLoader or error('')
 
-local Class = lib_dep.Class or error('')
----@type AssetLib
-local AssetLib = lib_dep.Asset or error('')
-local AssetLoader = AssetLib.Loader or error('')
----@type UtilsLib
-local UtilsLib = lib_dep.Utils or error('')
-local isTypeErr = UtilsLib.isTypeErr or error('')
-local Log = UtilsLib.Log or error('')
-
----@type BinaryAbilityDB
-local AbilDB = {}
-AssetLoader.load(lib_path..'AbilityDB', AbilDB)
+---@type BinaryFieldAbility
+local BinFieldAbility = {}
+SmartLoader.load(LibManager.getCurLib()..'.Field.Ability', BinFieldAbility)
 ---@type BinaryFileClass
-local BinaryFile = require(lib_path..'File') or error('')
----@type BinaryDataClass
-local BinaryData = require(lib_path..'Data') or error('')
+local BinFile = require('File') or error('')
+---@type BinaryObjectClass
+local BinObject = require('Object') or error('')
 ---@type BinaryUtils
-local BinaryUtils = require(lib_path..'Utils') or error('')
+local BinUtils = require('Utils') or error('')
 
-local FourCC = function(id) return string.unpack(">I4", id) end
+local FourCC = FourCC or function(id) return string.unpack(">I4", id) end
 
 --=======
 -- Class
 --=======
 
-local BinaryAbility = Class.new('BinaryAbility', BinaryData)
----@class BinaryAbility : BinaryData
+local BinaryAbility = Class.new('BinaryAbility', BinObject)
+---@class BinaryAbility : BinaryObject
 local public = BinaryAbility.public
----@class BinaryAbilityClass : BinaryDataClass
+---@class BinaryAbilityClass : BinaryObjectClass
 local static = BinaryAbility.static
 ---@type BinaryAbilityClass
 local override = BinaryAbility.override
@@ -55,7 +50,7 @@ function override.new(new_id, base_id, name, child)
     if child then isTypeErr(child, BinaryAbility, 'child') end
 
     local instance = child or Class.allocate(BinaryAbility)
-    instance = BinaryData.new(new_id, base_id, name, instance)
+    instance = BinObject.new(new_id, base_id, name, instance)
     private.newData(instance)
 
     private.file:add(instance)
@@ -69,12 +64,12 @@ end
 
 ---@param value number
 function public:setLevels(value)
-    private.setValue(self, AbilDB.Levels, nil, 0, value)
+    private.setValue(self, BinFieldAbility.Levels, nil, 0, value)
 end
 
 ---@param value boolean
 function public:setHero(value)
-    private.setValue(self, AbilDB.HeroAbility, nil, 0, value)
+    private.setValue(self, BinFieldAbility.HeroAbility, nil, 0, value)
 end
 
 ---@param value string
@@ -83,32 +78,32 @@ function public:setHotkey(value)
     if string.len(value) > 1 then
         Log:err('value length > 1.', 2)
     end
-    private.setValue(self, AbilDB.HotkeyNormal, nil, 0, value)
+    private.setValue(self, BinFieldAbility.HotkeyNormal, nil, 0, value)
 end
 
 function public:setButtonPositionNormal(x, y)
-    private.setValue(self, AbilDB.ButtonPositionNormalX, nil, 0, x)
-    private.setValue(self, AbilDB.ButtonPositionNormalY, nil, 0, y)
+    private.setValue(self, BinFieldAbility.ButtonPositionNormalX, nil, 0, x)
+    private.setValue(self, BinFieldAbility.ButtonPositionNormalY, nil, 0, y)
 end
 
 ---@param value string
 function public:setArtCaster(value)
-    private.setValue(self, AbilDB.ArtCaster, nil, 0, value)
+    private.setValue(self, BinFieldAbility.ArtCaster, nil, 0, value)
 end
 
 ---@param value string
 function public:setArtEffect(value)
-    private.setValue(self, AbilDB.ArtEffect, nil, 0, value)
+    private.setValue(self, BinFieldAbility.ArtEffect, nil, 0, value)
 end
 
 ---@param value string
 function public:setArtSpecial(value)
-    private.setValue(self, AbilDB.ArtSpecial, nil, 0, value)
+    private.setValue(self, BinFieldAbility.ArtSpecial, nil, 0, value)
 end
 
 ---@param value string
 function public:setArtTarget(value)
-    private.setValue(self, AbilDB.ArtTarget, nil, 0, value)
+    private.setValue(self, BinFieldAbility.ArtTarget, nil, 0, value)
 end
 
 -- ANcl
@@ -116,25 +111,25 @@ end
 ---@param value number
 ---@param lvl number
 function public:setArtDuration(value, lvl)
-    private.setValue(self, AbilDB.ANcl.ArtDuration, FourCC('ANcl'), lvl, value)
+    private.setValue(self, BinFieldAbility.ANcl.ArtDuration, FourCC('ANcl'), lvl, value)
 end
 
 ---@param value string
 ---@param lvl number
 function public:setOrderId(value, lvl)
-    private.setValue(self, AbilDB.ANcl.BaseOrderID, FourCC('ANcl'), lvl, value)
+    private.setValue(self, BinFieldAbility.ANcl.BaseOrderID, FourCC('ANcl'), lvl, value)
 end
 
 ---@param value boolean
 ---@param lvl number
 function public:setDisableOtherAbilities(value, lvl)
-    private.setValue(self, AbilDB.ANcl.DisableOtherAbilities, FourCC('ANcl'), lvl, value)
+    private.setValue(self, BinFieldAbility.ANcl.DisableOtherAbilities, FourCC('ANcl'), lvl, value)
 end
 
 ---@param value number
 ---@param lvl number
 function public:setFollowThoughTime(value, lvl)
-    private.setValue(self, AbilDB.ANcl.FollowThroughTime, FourCC('ANcl'), lvl, value)
+    private.setValue(self, BinFieldAbility.ANcl.FollowThroughTime, FourCC('ANcl'), lvl, value)
 end
 
 ---@param visible boolean
@@ -150,7 +145,7 @@ function public:setOptions(visible, target_image, physical, universal, uniq, lvl
     value = physical and value + 4 or value
     value = universal and value + 8 or value
     value = uniq and value + 16 or value
-    private.setValue(self, AbilDB.ANcl.Options, FourCC('ANcl'), lvl, value)
+    private.setValue(self, BinFieldAbility.ANcl.Options, FourCC('ANcl'), lvl, value)
 end
 
 ---@param target string | "'None'" | "'Unit'" | "'Point'" | "'PointOrUnit'"
@@ -165,7 +160,7 @@ function public:setTargeting(target, lvl)
         Log:err('Unavailable target type.', 2)
     end
 
-    private.setValue(self, AbilDB.ANcl.TargetType, FourCC('ANcl'), lvl, value)
+    private.setValue(self, BinFieldAbility.ANcl.TargetType, FourCC('ANcl'), lvl, value)
 end
 
 ---@param list table<number, targettype>
@@ -173,11 +168,11 @@ end
 function public:setTargetsAllowed(list, lvl)
     local val = ''
     for i = 1, #list do
-        val = val..BinaryUtils.targetTypeToData(list[i])
+        val = val..BinUtils.targetTypeToData(list[i])
         if i < #list then val = val..',' end
     end
 
-    private.setValue(self, AbilDB.TargetsAllowed, nil, lvl, val)
+    private.setValue(self, BinFieldAbility.TargetsAllowed, nil, lvl, val)
 end
 
 ---@param value_id string
@@ -216,8 +211,8 @@ function public:serialize()
     local priv = private.data[self]
 
     -- Header
-    local head = BinaryUtils.id2byte(self:getBaseId())..   -- Base (parent's) id
-                 BinaryUtils.id2byte(self:getId())         -- New id
+    local head = BinUtils.id2byte(self:getBaseId())..   -- Base (parent's) id
+                 BinUtils.id2byte(self:getId())         -- New id
     local changes_count = 0
 
     local bytes = ''
@@ -230,8 +225,8 @@ function public:serialize()
             bytes = bytes..
                     value_id..
                     private.type_to_bytes[value_type]..
-                    BinaryUtils.int2byte(lvl)..
-                    BinaryUtils.int2byte(extra_id)..
+                    BinUtils.int2byte(lvl)..
+                    BinUtils.int2byte(extra_id)..
                     private.value_to_bytes[value_type](value)..
                     '\0\0\0\0'
             changes_count = changes_count + 1
@@ -239,7 +234,7 @@ function public:serialize()
     end
 
     bytes = head..
-            BinaryUtils.int2byte(changes_count)..   -- Changes count
+            BinUtils.int2byte(changes_count)..   -- Changes count
             bytes
 
     return bytes
@@ -277,19 +272,19 @@ function private.setValue(self, db, avaliable_base_id, lvl, value)
 end
 
 private.type_to_bytes = {
-    bool = BinaryUtils.int2byte(0),
-    int = BinaryUtils.int2byte(0),
-    real = BinaryUtils.int2byte(1),
-    unreal = BinaryUtils.int2byte(2),
-    string = BinaryUtils.int2byte(3),
+    bool = BinUtils.int2byte(0),
+    int = BinUtils.int2byte(0),
+    real = BinUtils.int2byte(1),
+    unreal = BinUtils.int2byte(2),
+    string = BinUtils.int2byte(3),
 }
 
 private.value_to_bytes = {
-    bool = BinaryUtils.int2byte,
-    int = BinaryUtils.int2byte,
-    real = BinaryUtils.float2byte,
-    unreal = BinaryUtils.float2byte,
-    string = BinaryUtils.str2byte,
+    bool = BinUtils.int2byte,
+    int = BinUtils.int2byte,
+    real = BinUtils.float2byte,
+    unreal = BinUtils.float2byte,
+    string = BinUtils.str2byte,
 }
 
 private.real_value_type = {
@@ -300,8 +295,12 @@ private.real_value_type = {
     string = 'string',
 }
 
-local sep = Compiletime(package.config:sub(1,1))
-private.file = BinaryFile.new((GetDstDir and GetDstDir() or '')..sep..'war3map.w3a')
-CompileFinal(function() private.file:save() end)
+local sep = Macro(package.config:sub(1,1))
+private.file = BinFile.new((GetDst and GetDst()..sep..'war3map.w3a' or ''))
+BuildFinal(function()
+    if not IsGame() then
+        private.file:save()
+    end
+end)
 
 return static
