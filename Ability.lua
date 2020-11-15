@@ -163,13 +163,15 @@ function public:setTargeting(target, lvl)
     private.setValue(self, BinFieldAbility.ANcl.TargetType, FourCC('ANcl'), lvl, value)
 end
 
----@param list table<number, targettype>
+---@param list table<number, string>
 ---@param lvl number
 function public:setTargetsAllowed(list, lvl)
     local val = ''
-    for i = 1, #list do
-        val = val..BinUtils.targetTypeToData(list[i])
-        if i < #list then val = val..',' end
+    if #list > 0 then
+        val = list[1]
+        for i = 2, #list do
+            val = val..','..list[i]
+        end
     end
 
     private.setValue(self, BinFieldAbility.TargetsAllowed, nil, lvl, val)
