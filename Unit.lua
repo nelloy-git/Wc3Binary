@@ -173,18 +173,18 @@ function public:setAttackRange(atk, value)
     self:setValue(db.value_id, db.value_type, value)
 end
 
----@param atk number
----@param list table<number, targettype>
-function public:setAttackTargetsAllowed(atk, list)
-    local val = ''
-    for i = 1, #list do
-        val = val..BinUtils.targetTypeToData(list[i])
-        if i < #list then val = val..',' end
-    end
-
-    local db = db_atk[atk].TargetsAllowed
-    self:setValue(db.value_id, db.value_type, val)
-end
+-- ---@param atk number
+-- ---@param list table<number, targettype>
+-- function public:setAttackTargetsAllowed(atk, list)
+--     local val = ''
+--     for i = 1, #list do
+--         val = val..BinUtils.targetTypeToData(list[i])
+--         if i < #list then val = val..',' end
+--     end
+-- 
+--     local db = db_atk[atk].TargetsAllowed
+--     self:setValue(db.value_id, db.value_type, val)
+-- end
 
 ---------------
 -- Interface --
